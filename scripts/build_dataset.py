@@ -17,7 +17,10 @@ import re
 
 import numpy as np
 
-from geo_utils import target_mesh, solar_zenith
+try:
+    from geo_utils import target_mesh, solar_zenith
+except ImportError:  # cuando se importa como scripts.build_dataset
+    from scripts.geo_utils import target_mesh, solar_zenith
 
 LST_MEAN, LST_STD = 290.0, 15.0     # normalizacion (K)
 DEM_MEAN, DEM_STD = 2500.0, 1800.0  # normalizacion (m)
