@@ -18,23 +18,37 @@ import xarray as xr
 from geo_utils import NNRemap, goes_latlon, LAT_N, LAT_S, LON_W, LON_E
 
 SWITCH = dt.date(2025, 4, 4)  # GOES-16 -> GOES-19 como GOES-East
+# LST2KMF = LST enterprise 2 km full disk; LSTF (baseline) es de 10 km!
+PRODUCTS = ["ABI-L2-LST2KMF", "ABI-L2-LSTF"]
 _remap_cache = {}
+_warned = set()
 
 
 def bucket_for(day):
     return "noaa-goes16" if day < SWITCH else "noaa-goes19"
 
 
+def list_hour(fs, day, hour):
+    doy = day.timetuple().tm_yday
+    for prod in PRODUCTS:
+        prefix = f"{bucket_for(day)}/{prod}/{day.year}/{doy:03d}/{hour:02d}/"
+        try:
+            files = fs.ls(prefix)
+        except FileNotFoundError:
+            continue
+        if files:
+            if prod != PRODUCTS[0] and prod not in _warned:
+                _warned.add(prod)
+                print(f"[goes][warn] usando {prod} (10 km) como respaldo")
+            return files
+    return []
+
+
 def process_hour(fs, day, hour, outdir):
     out = os.path.join(outdir, f"goes_{day:%Y%m%d}_{hour:02d}.npz")
     if os.path.exists(out):
         return "skip"
-    doy = day.timetuple().tm_yday
-    prefix = f"{bucket_for(day)}/ABI-L2-LSTF/{day.year}/{doy:03d}/{hour:02d}/"
-    try:
-        files = fs.ls(prefix)
-    except FileNotFoundError:
-        return "no-list"
+    files = list_hour(fs, day, hour)
     if not files:
         return "no-file"
     with fs.open(files[0], "rb") as f:
