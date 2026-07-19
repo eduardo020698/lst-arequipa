@@ -23,12 +23,13 @@ resolución espacial Y temporal a la vez.
 
 ## Cómo correr (Colab)
 
-1. Sube esta carpeta `lst-arequipa` completa a tu Google Drive (MyDrive).
-2. Abre `notebooks/entrenamiento_colab.ipynb` en Colab (doble clic desde Drive).
-3. Activa GPU: `Entorno de ejecución → Cambiar tipo → T4 GPU`.
-4. Corre las celdas en orden. Primero la **prueba de humo** (5 días, ~10 min);
-   si pasa, lanza el rango completo (1–2 años).
-5. El entrenamiento es **reanudable** (`--resume`): si Colab corta la sesión,
+1. Abre el notebook directo desde GitHub (un clic):
+   https://colab.research.google.com/github/eduardo020698/lst-arequipa/blob/main/notebooks/entrenamiento_colab.ipynb
+2. Activa GPU: `Entorno de ejecución → Cambiar tipo → T4 GPU`.
+3. Corre las celdas en orden: el código se clona solo y los datos/checkpoints
+   se guardan en tu Google Drive (carpeta `lst_arequipa`). Primero la
+   **prueba de humo** (5 días, ~10 min); si pasa, lanza el rango completo.
+4. El entrenamiento es **reanudable** (`--resume`): si Colab corta la sesión,
    vuelve a correr la celda y continúa desde el último checkpoint.
 
 ## Estructura
